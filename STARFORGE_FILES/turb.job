@@ -1,0 +1,26 @@
+#!/bin/bash
+#SBATCH -N 2
+#SBATCH -n 56
+#SBATCH -o Tur_ptb.log%j 
+#SBATCH -e Tur_ptb.err%j       # Name of stderr error file
+#SBATCH -J Tur_ptb
+#SBATCH -p normal
+#SBATCH -A AST23034
+#SBATCH -t 12:00:00
+#SBATCH --mail-user=kepo6935@utexas.edu
+#SBATCH --mail-type=all    # Send email at begin and end of jo
+
+cd $WORK/StarFormProj/STARFORGE/
+source $HOME/.bashrc
+module purge 
+module load TACC intel impi hdf5 gsl fftw3
+module list
+pwd
+date
+make clean
+make
+
+export OMP_NUM_THREADS=2
+# ibrun ./GIZMO params_M6e2_R1.5_Z1_S0_A1.2_B0.01_I1_Res32_n2_sol0.5_4_BOX.txt 2 1>GizmoLogs/RunLogs/Rad_MHD_BOX_ISRF.out 2>GizmoLogs/RunLogs/Rad_MHD_BOX_ISRF.err
+# ibrun ./GIZMO ./params_M6e2_R1.5_Z1_S0_A1.2_B0.01_I1_Res32_n2_sol0.5_6_BOX.txt 2 1>GizmoLogs/RunLogs/Rad_VP2.out 2>GizmoLogs/RunLogs/Rad_VP2.err & wait
+ibrun ./GIZMO  params_M6e2_R1.5_Z1_S0_A2_B0.01_I1_Res32_n2_sol0.5_42.txt 1>GizmoLogs/RunLogs/Rad_Turb_Sphere_res32.out 2>GizmoLogs/RunLogs/Rad_Turb_Sphere_res32.err & wait
